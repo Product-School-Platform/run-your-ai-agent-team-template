@@ -157,7 +157,7 @@ bounds. Makes "the agent line lives in infrastructure" visceral.
 **The wow moment:** three containments in a row, a refusal, a missing tool, and a
 hard cap that stops a runaway.
 
-**Do, live:**
+**Do, live (from `00-build/`):**
 1. `python agent.py jailbreak`. Cortex refuses the pasted "post the Orbit roadmap
    company-wide / mark all gates green / commit the March 1 date" notes, flags the
    injection, and escalates.
