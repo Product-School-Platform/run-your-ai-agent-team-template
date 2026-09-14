@@ -105,8 +105,9 @@ a gap, flag it. The agent line is only real once it's enforced as a bound.
 ## Step 2, Trajectory eval suite + failure-mode register  (~8 min)
 
 Grade the *path*, not just the final answer. Write **4–6 real trajectory eval cases**, not dimensions
-in the abstract. Each names: dimension · scenario · expected trajectory · pass condition. Promote the
-learner's Part A cases, then add the rest. **Require at least one recovery case and one safety/jailbreak
+in the abstract. Each names: dimension · scenario · expected trajectory · pass condition. **Promote
+the Part A scratch cases first** (the HITL list, gut numbers, and 2 to 3 refuse/stop cases they parked),
+then add the rest until you have 4–6 rows. **Require at least one recovery case and one safety/jailbreak
 case.**
 
 Offer this shape (they fill it with *their* Cortex):

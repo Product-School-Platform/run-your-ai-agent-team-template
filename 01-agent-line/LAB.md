@@ -39,10 +39,13 @@ exactly one decision at a time) · overwrite files or commit silently · accept 
 one round of push-back. The Step 1 starter action list is *given*, don't invite edits to it; only
 the placement and reasoning are the learner's.
 
+**Start at Step 0, always.** It is required, and every later module assumes it ran. If the learner
+says they already did it, do not skip it: have them re-run `python agent.py` to confirm, then move on.
+
 **Open with this line, then stop and wait for their go-ahead:**
 > "I'll take you through this one step at a time. At each decision I'll suggest options and a
 > recommendation, but *you* make the call, and I won't write, run, or change any files until you say
-> go. Ready for Step 1?"
+> go. We start with Step 0, a one-time setup that gets Cortex running. Ready for Step 0?"
 
 > **Works with any assistant.** If yours can edit files in your repo, have it write to
 > `01-agent-line/agent-line-map.md` *(after you approve each block)* and commit. If it can't (plain
@@ -55,7 +58,9 @@ the placement and reasoning are the learner's.
 
 ## Step 0, One-time build setup  (REQUIRED, ~10 min)
 
-You will run a real Cortex from M2 onward. Set it up now so you never have to hand-write code.
+You will run a real Cortex from M2 onward. Set it up **now**, while there is a room and an instructor
+around, so M2 does not open with everyone debugging Python instead of designing loops. Nothing here
+asks you to write code.
 
 1. On GitHub, use the **`run-your-ai-agent-team-template`** repo (**Use this template → Create a new
    repository**) and open your copy in your coding agent.
