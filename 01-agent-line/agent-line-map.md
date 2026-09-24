@@ -10,26 +10,42 @@ List every discrete decision or action in your agent's workflow, then score each
 
 | Decision / action | Reversibility (H/M/L) | Blast radius (H/M/L) | Measurability (H/M/L) | Above / Below | HITL? |
 |---|---|---|---|---|---|
-| _Pull project state + recent GitHub/Jira activity_ | H | L | H | Below | · |
-| _Draft the weekly leadership status update_ | H | M | M | Below | spot-check |
-| _Propose next sprint's stories from the PRD (within cap)_ | M | M | M | Below | spot-check |
-| _Post the update to a channel / commit a ship date_ | L | H | M | Above | required |
-| _Mark a launch gate green / merge or close a ticket_ | L | H | M | Above | required |
-| _…_ | | | | | |
+| Pull project state + activity | H | L | H | Below | No |
+| Decide relevant context | M | M | L | HITL (agent proposes scope) | Required |
+| Draft the update | H | L | M | Below | Spot-check (claims vs data) |
+| Decide tone / commitment level | L | H | L | Above | — |
+| Flag at-risk / escalation | M | M | M | HITL (agent surfaces; human validates) | Required |
+| Choose what to escalate | M | H | M | Above | — |
+| Propose a story batch (capped) | H | M | M | HITL (agent proposes queue) | Required |
+| Post an update / approve a company-wide one | L | H | H | Above | Required |
 
 ## Agent anatomy (sketch)
 
-- **Model:** _your default fast model + when you escalate to a frontier model, and why_
-- **Tools:** _project + activity lookup (read) · past-update search · roadmap · team norms · story proposal (capped) …_
-- **Memory:** _what persists across runs (roadmap, decisions, norms) vs. purged_
-- **Loop:** _placeholder, defined in M2 loop-spec.md_
-- **Bounds:** _placeholder, defined in M5 bounds-and-evals.md_
-- **Evals:** _placeholder, defined in M5 bounds-and-evals.md_
+- **Model:** Default **gpt-4o-mini** (or equivalent fast/cheap model) for routine pulls, drafts, and capped story proposals; escalate to a **frontier model** only for ambiguous cross-project tradeoffs, high-stakes wording, or when the critic loops and needs a stronger pass.
+- **Tools:** Read-only **project + activity** lookup, **past-update search**, **roadmap/norms** context, **propose_stories** (capped queue — no post/create/merge).
+- **Memory:** Persist **roadmap, decision log, team norms, past updates** across runs; purge one-off task noise after the HITL checkpoint.
+- **Loop:** _placeholder — M2 `loop-spec.md`_
+- **Bounds:** _placeholder — M5 `bounds-and-evals.md`_ (spend cap + queue cap already in `.env`)
+- **Evals:** _placeholder — M5_
 
 ## The golden rule, applied
 
-_One sentence per above-the-line decision: why it stays human (which of reversibility / blast radius / measurability failed)._
+1. **Pull project state + activity** sits **below** the line because it's **high** to reverse, has **low** blast radius, and is **high** measurability to verify; deciding factor: **measurability**.
+
+2. **Decide relevant context** sits at **HITL** because it's **medium** to reverse, has **medium** blast radius, and is **low** measurability to verify; deciding factor: **measurability**.
+
+3. **Draft the update** sits **below** the line (with spot-check) because it's **high** to reverse, has **low** blast radius, and is **medium** measurability to verify; deciding factor: **reversibility**.
+
+4. **Decide tone / commitment level** sits **above** the line because it's **low** to reverse, has **high** blast radius, and is **low** measurability to verify; deciding factor: **blast radius**.
+
+5. **Flag at-risk / escalation** sits at **HITL** because it's **medium** to reverse, has **medium** blast radius, and is **medium** measurability to verify; deciding factor: **measurability** (borderline — human validates before anyone is pinged).
+
+6. **Choose what to escalate** sits **above** the line because it's **medium** to reverse, has **high** blast radius, and is **medium** measurability to verify; deciding factor: **blast radius**.
+
+7. **Propose a story batch (capped)** sits at **HITL** because it's **high** to reverse, has **medium** blast radius, and is **medium** measurability to verify; deciding factor: **blast radius** (queue still skews planning if wrong).
+
+8. **Post / approve company-wide** sits **above** the line because it's **low** to reverse, has **high** blast radius, and is **high** measurability to verify; deciding factor: **reversibility**.
 
 ## Hardest call
 
-_Your toughest "above vs below" decision and how you resolved it. (Share this in `#cohort-channel`.)_
+**Choose what to escalate** — The most critical piece of a PM is decide what to escalate when there are multiple items that have similar priorities and impact. **Blast radius** settled it: wrong routing wastes the right people even when the underlying flag was reasonable. _(Share this in `#cohort-channel`.)_
