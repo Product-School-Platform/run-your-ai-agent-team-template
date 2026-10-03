@@ -10,6 +10,7 @@ from unittest.mock import Mock, patch
 
 import agent
 import tools
+import critic
 
 PROPOSAL = {'outcome': 'done', 'update': 'Northstar draft for review.', 'stories': [
     {'priority': 1, 'title': 'Review empty-state copy', 'reason': 'Open issue', 'source': '#818'}]}
@@ -55,6 +56,36 @@ class LoopTests(unittest.TestCase):
 
     def test_escalation_is_not_success(self):
         self.assertEqual(self.run_mock({'outcome': 'escalate', 'reason': 'Conflicting data'})[0], 'escalate')
+
+    def test_sensitive_critic_failure_stops_without_revision_or_queue(self):
+        client = Mock()
+        client.chat.completions.create.return_value = response(PROPOSAL)
+        verdict = {'verdict': 'fail', 'reasons': ['Unapproved date commitment'],
+                   'failed_checks': ['unauthorized_commitment'],
+                   '_usage': {'prompt': 1, 'completion': 1}}
+        with patch.object(agent, 'OpenAI', return_value=client), patch.object(agent, 'review', return_value=verdict), patch.object(tools, 'propose_stories') as queue:
+            self.assertEqual(agent.run(approved_context='P-NORTH', approved_tone=True), 'escalate')
+        self.assertEqual(client.chat.completions.create.call_count, 1)
+        queue.assert_not_called()
+
+    def test_critic_context_and_verdict_schema(self):
+        client = Mock()
+        client.chat.completions.create.return_value = response({'verdict': 'pass', 'reasons': []})
+        verdict = critic.review(client, 'test-model', 'DRAFT', 'SOURCE')
+        self.assertEqual(verdict['verdict'], 'fail')
+        messages = client.chat.completions.create.call_args.kwargs['messages']
+        self.assertEqual(len(messages), 2)
+        self.assertEqual(messages[0]['content'], critic.CRITIC_SYSTEM)
+        self.assertIn('SOURCE', messages[1]['content'])
+        self.assertIn('DRAFT', messages[1]['content'])
+
+    def test_failure_routing(self):
+        for check in ['confidentiality', 'unauthorized_commitment']:
+            self.assertEqual(critic.failure_action({'verdict': 'fail', 'failed_checks': [check]}, 0), 'escalate')
+        ordinary = {'verdict': 'fail', 'failed_checks': ['grounding']}
+        self.assertEqual(critic.failure_action(ordinary, 0), 'revise')
+        self.assertEqual(critic.failure_action(ordinary, 1), 'revise')
+        self.assertEqual(critic.failure_action(ordinary, 2), 'escalate')
 
     def test_missing_data_three_attempts_without_model(self):
         getter = Mock(return_value={'error': 'project_not_found'})
