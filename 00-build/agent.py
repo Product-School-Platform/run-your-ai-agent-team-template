@@ -12,6 +12,7 @@ import queue
 import re
 import threading
 import time
+import unicodedata
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -24,8 +25,9 @@ from critic import review, failure_action
 from prompts import CORTEX_SYSTEM
 
 MODEL = os.environ.get('CORTEX_MODEL', 'gpt-4o')
-MAX_ITERATIONS = int(os.environ.get('CORTEX_MAX_ITERATIONS', '8'))
-MAX_REVISIONS = min(2, int(os.environ.get('CORTEX_MAX_REVISIONS', '2')))
+MAX_ITERATIONS = int(os.environ.get('CORTEX_MAX_ITERATIONS', '5'))
+MAX_REVISIONS = max(0, min(4, MAX_ITERATIONS - 1,
+                           int(os.environ.get('CORTEX_MAX_REVISIONS', '4'))))
 COST_CAP_USD = float(os.environ.get('CORTEX_COST_CAP_USD', '0.10'))
 MAX_QUEUE_ITEMS = int(os.environ.get('CORTEX_MAX_QUEUE_ITEMS', '10'))
 MAX_SECONDS = 600
@@ -86,6 +88,28 @@ class Bounds:
 
 def banner(text):
     print(f"\n{'=' * 64}\n{text}\n{'=' * 64}")
+
+
+def task_override_signals(body):
+    """Flag known explicit rule/permission overrides for human review.
+
+    This conservative task preflight is not a general injection detector. Model,
+    critic, scoped retrieval, and absent write tools remain separate safeguards.
+    Only static signal labels are returned; untrusted text is not logged.
+    """
+    normalized = unicodedata.normalize('NFKC', body)
+    normalized = ''.join(c for c in normalized if unicodedata.category(c) != 'Cf')
+    patterns = {
+        'system_override': r'\bsystem[\s_/-]+override\b',
+        'admin_authority_override': r'\badmin[\s_-]+mode\s*:',
+        'rule_override': (r'\b(?:ignore|disregard|override)\s+'
+                          r'(?:(?:all|the|your|previous|prior|existing)\s+){0,5}'
+                          r'(?:rules|instructions|norms|policies|safeguards)\b'),
+        'approval_bypass': (r'\b(?:bypass|disable)\s+(?:the\s+)?'
+                            r'(?:human\s+approval|hitl|approval\s+(?:gate|checkpoint))\b'),
+    }
+    return [label for label, pattern in patterns.items()
+            if re.search(pattern, normalized, re.IGNORECASE)]
 
 
 def retrieve(bounds, name, args, valid):
@@ -187,6 +211,14 @@ def run(which='happy', *, approved_context=None, approved_tone=False, demo_bad_m
         if 'error' in task:
             raise StopRun('stuck', task['error'])
         banner(f'CORTEX RUN: {which}; limit 10 minutes; queue cap {MAX_QUEUE_ITEMS}')
+        signals = task_override_signals(task['body'])
+        if signals:
+            print('SECURITY EVENT: ' + json.dumps({
+                'event': 'prompt_injection_detected', 'source': 'task_brief',
+                'signals': signals, 'action': 'refuse_and_escalate',
+            }))
+            raise StopRun('escalate', 'Prompt injection detected in task brief; '
+                          'embedded rule/permission overrides refused; human review required')
         print(task['body'])
         match = re.search(r'^Project:\s*(P-[A-Z0-9-]+)', task['body'], re.MULTILINE)
         if not match:
