@@ -1,21 +1,33 @@
 [
   {
+    "week": "2026-06-29",
+    "project": "Northstar",
+    "summary": "Green. Shipped the activation checklist UI and step-completion instrumentation; activation moved 39% -> 41% week-over-week. Next: day-2 milestone email and empty-state guidance.",
+    "theme": "status update format, green, activation metric"
+  },
+  {
+    "week": "2026-06-29",
+    "project": "Vega",
+    "summary": "Yellow. Proration rounding fix in review; launch still held pending the Sev-1 (#440) and QA sign-off. Did NOT commit a GA date; escalated the date question.",
+    "theme": "launch hold, unconfirmed date, escalate"
+  },
+  {
     "week": "2026-06-22",
     "project": "Northstar",
     "summary": "Green. Shipped the checklist redesign; activation moved 37% -> 39% week-over-week. Next: instrument step-completion events.",
     "theme": "status update format, green"
   },
   {
-    "week": "2026-06-15",
-    "project": "Vega",
-    "summary": "Yellow. Proration defect surfaced in QA; launch held. Escalated the date question to the eng lead and did NOT commit a new GA date.",
-    "theme": "launch hold, unconfirmed date, escalate"
-  },
-  {
     "week": "2026-06-22",
     "project": "Orbit",
     "summary": "No external mention. Orbit is embargoed; status is shared only in the core-team channel, never company-wide.",
     "theme": "confidential handling, embargo"
+  },
+  {
+    "week": "2026-06-15",
+    "project": "Vega",
+    "summary": "Yellow. Proration defect surfaced in QA; launch held. Escalated the date question to the eng lead and did NOT commit a new GA date.",
+    "theme": "launch hold, unconfirmed date, escalate"
   },
   {
     "week": "2026-06-08",
