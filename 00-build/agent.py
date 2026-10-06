@@ -23,15 +23,16 @@ import tools
 from critic import review, failure_action
 from prompts import CORTEX_SYSTEM
 
-MODEL = os.environ.get('CORTEX_MODEL', 'gpt-4o-mini')
+MODEL = os.environ.get('CORTEX_MODEL', 'gpt-4o')
 MAX_ITERATIONS = int(os.environ.get('CORTEX_MAX_ITERATIONS', '8'))
 MAX_REVISIONS = min(2, int(os.environ.get('CORTEX_MAX_REVISIONS', '2')))
 COST_CAP_USD = float(os.environ.get('CORTEX_COST_CAP_USD', '0.10'))
 MAX_QUEUE_ITEMS = int(os.environ.get('CORTEX_MAX_QUEUE_ITEMS', '10'))
 MAX_SECONDS = 600
 DATA_ATTEMPTS = 3
-PRICE_IN = float(os.environ.get('CORTEX_PRICE_IN_PER_M', '0.15'))
-PRICE_OUT = float(os.environ.get('CORTEX_PRICE_OUT_PER_M', '0.60'))
+# Conservative budgeting estimates for gpt-4o, not provider billing quotes.
+PRICE_IN = float(os.environ.get('CORTEX_PRICE_IN_PER_M', '10' if MODEL == 'gpt-4o' else '0.15'))
+PRICE_OUT = float(os.environ.get('CORTEX_PRICE_OUT_PER_M', '30' if MODEL == 'gpt-4o' else '0.60'))
 OUTPUT_DIR = Path(__file__).parent / 'run-output'
 
 
@@ -137,6 +138,27 @@ def render_proposal(value):
     return '\n'.join(lines)
 
 
+def story_evidence(sources):
+    """Link literal PRD feature names to open issues, preserving both source roles.
+
+    This is a retrieval aid, not approval or a replacement for independent review.
+    Unmatched issues remain in the full activity source for the model to inspect.
+    """
+    project = sources['get_project']
+    match = re.search(r'In scope:\s*(.*?)(?:\.\s*Out of scope:|$)',
+                      project.get('prd_summary', ''), re.IGNORECASE)
+    if not match:
+        return []
+    features = [part.strip().rstrip('.') for part in match.group(1).split(',')]
+    return [{'scope_source': f'get_project / {project["prd"]}',
+             'scope_item': feature,
+             'work_source': f'get_activity / {item["id"]}',
+             'work_evidence': item['title']}
+            for item in sources['get_activity']['activity']
+            if item.get('type') == 'issue_open' and item.get('id') and item.get('title')
+            for feature in features if feature and feature.casefold() in item['title'].casefold()]
+
+
 def finish(which, outcome, reason, draft, bounds):
     banner(f'{outcome.upper()}: {reason}')
     print(f'Estimated recorded cost: ${bounds.cost:.4f}')
@@ -196,6 +218,9 @@ def run(which='happy', *, approved_context=None, approved_tone=False, demo_bad_m
             sources[name] = retrieve(bounds, name, {'query': query}, lambda r, f=field: bool(r.get(f)))
         if 'CONFIDENTIAL' in sources['get_roadmap']['roadmap'].upper():
             raise StopRun('escalate', 'Confidential roadmap requires human review')
+        sources['story_evidence'] = story_evidence(sources)
+        print('\nSTORY EVIDENCE (separate scope and unfinished-work sources):\n'
+              + json.dumps(sources['story_evidence'], ensure_ascii=False, indent=2))
         source_text = json.dumps(sources, ensure_ascii=False)
         client = OpenAI(max_retries=0, timeout=60)
         messages = [
@@ -214,9 +239,16 @@ def run(which='happy', *, approved_context=None, approved_tone=False, demo_bad_m
             except json.JSONDecodeError:
                 proposed = None
             if demo_bad_metric and iteration == 1 and isinstance(proposed, dict) and proposed.get('outcome') == 'done':
-                print('LAB TEST INJECTION: replace update with an invented 80% activation metric; source remains 41%.')
-                proposed['update'] = ('Northstar (P-NORTH) weekly VP update: activation rate is 80%, '
-                                      'up from 39% week-over-week. Draft for human approval.')
+                metric = next((a for a in sources['get_activity']['activity']
+                               if a.get('type') == 'metric' and a.get('name') == 'activation_rate'), None)
+                if metric is None:
+                    raise StopRun('stuck', 'Bad-metric demo requires an activation_rate source')
+                print('LAB TEST INJECTION: replace update with an invented 80% activation metric; '
+                      f'source remains {metric["value"]}, prior {metric["prior"]}.')
+                proposed['update'] = (f'{project_name} ({project_id}) weekly VP update: '
+                                      f'activation_rate is 80%, up from {metric["prior"]} '
+                                      f'{metric["window"]} (source: get_activity). '
+                                      'Draft for human approval.')
                 raw = json.dumps(proposed)
             if isinstance(proposed, dict) and proposed.get('outcome') == 'escalate':
                 raise StopRun('escalate', str(proposed.get('reason') or 'Model requests human review'))

@@ -51,6 +51,42 @@ class LoopTests(unittest.TestCase):
         outcome, calls = self.run_mock({'outcome': 'done', 'update': 'Draft', 'stories': []})
         self.assertEqual((outcome, calls), ('escalate', 3))
 
+    def test_bad_metric_is_revised_before_queue_and_sources_stay_unchanged(self):
+        client = Mock()
+        client.chat.completions.create.return_value = response(PROPOSAL)
+        before = tools.get_activity('P-NORTH')
+        metric = next(a for a in before['activity'] if a.get('name') == 'activation_rate')
+        failed = {'verdict': 'fail', 'reasons': ['Invented activation rate'],
+                  'failed_checks': ['grounding'], '_usage': {'prompt': 1, 'completion': 1}}
+        passed = {'verdict': 'pass', 'reasons': [], 'failed_checks': [],
+                  '_usage': {'prompt': 1, 'completion': 1}}
+        with patch.object(agent, 'OpenAI', return_value=client), \
+                patch.object(agent, 'review', side_effect=[failed, passed]) as review, \
+                patch.object(tools, 'propose_stories', wraps=tools.propose_stories) as queue:
+            self.assertEqual(agent.run(approved_context='P-NORTH', approved_tone=True,
+                                       demo_bad_metric=True), 'success')
+        first_draft = review.call_args_list[0].args[2]
+        self.assertIn('activation_rate is 80%', first_draft)
+        self.assertIn(f'up from {metric["prior"]}', first_draft)
+        self.assertNotIn('activation_rate is 80%', review.call_args_list[1].args[2])
+        self.assertEqual(client.chat.completions.create.call_count, 2)
+        queue.assert_called_once()
+        self.assertEqual(tools.get_activity('P-NORTH'), before)
+
+    def test_story_evidence_separates_scope_from_issue_requirement(self):
+        sources = {'get_project': {'prd': 'PRD-TEST',
+                    'prd_summary': 'In scope: contextual tips. Out of scope: pricing changes.'},
+                   'get_activity': {'activity': [
+                       {'type': 'issue_open', 'id': '#7', 'title': 'Contextual tips analytics review'},
+                       {'type': 'issue_open', 'id': '#8', 'title': 'Pricing changes review'},
+                       {'type': 'pr_merged', 'id': '#9', 'title': 'Contextual tips'}]}}
+        evidence = agent.story_evidence(sources)
+        self.assertEqual(len(evidence), 1)
+        self.assertEqual(evidence[0]['scope_item'], 'contextual tips')
+        self.assertEqual(evidence[0]['scope_source'], 'get_project / PRD-TEST')
+        self.assertEqual(evidence[0]['work_source'], 'get_activity / #7')
+        self.assertEqual(evidence[0]['work_evidence'], 'Contextual tips analytics review')
+
     def test_critic_rejection_stops_after_two_revisions(self):
         self.assertEqual(self.run_mock(verdict='fail'), ('escalate', 3))
 
