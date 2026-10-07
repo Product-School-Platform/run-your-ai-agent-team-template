@@ -1,5 +1,11 @@
 [
   {
+    "date": "2026-07-02",
+    "project": "Pulsar",
+    "summary": "Decision: Pulsar joins the confidential/embargoed set with Orbit. Never reference it in company-wide or external updates until launch; core-team channel only.",
+    "theme": "confidential, embargo, pulsar, orbit"
+  },
+  {
     "date": "2026-06-10",
     "project": "Vega",
     "summary": "Decision: do not commit a Vega GA date until the proration Sev-1 is closed and QA signs off. The date question is escalated, not answered by the PM alone.",

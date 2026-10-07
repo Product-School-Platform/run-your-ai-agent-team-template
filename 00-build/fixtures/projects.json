@@ -5,14 +5,14 @@
     "status": "on_track",
     "flags": [],
     "pm": "you",
-    "sprint": "Sprint 24",
+    "sprint": "Sprint 25",
     "prd": "PRD-Northstar-v3",
     "prd_summary": "PRD-Northstar-v3: reduce time-to-first-value in self-serve onboarding. In scope: guided activation checklist, step-completion instrumentation, empty-state guidance, contextual tips, a day-2 milestone email. Out of scope: pricing changes.",
     "activity": [
-      { "type": "pr_merged", "id": "#812", "title": "New activation checklist UI", "date": "2026-06-29" },
-      { "type": "pr_merged", "id": "#815", "title": "Instrument step-completion events", "date": "2026-06-30" },
-      { "type": "issue_open", "id": "#818", "title": "Empty-state copy needs review", "severity": "normal" },
-      { "type": "metric", "name": "activation_rate", "value": "41%", "prior": "39%", "window": "week-over-week" }
+      { "type": "pr_merged", "id": "#820", "title": "Day-2 milestone email", "date": "2026-07-02" },
+      { "type": "pr_merged", "id": "#823", "title": "Empty-state guidance copy (closes #818)", "date": "2026-07-03" },
+      { "type": "issue_open", "id": "#825", "title": "Contextual tips A/B needs analytics review", "severity": "normal" },
+      { "type": "metric", "name": "activation_rate", "value": "43%", "prior": "41%", "window": "week-over-week" }
     ]
   },
   "P-VEGA": {
@@ -21,12 +21,13 @@
     "status": "at_risk",
     "flags": ["launch_hold"],
     "pm": "you",
-    "sprint": "Sprint 24",
+    "sprint": "Sprint 25",
     "prd": "PRD-Vega-v1",
-    "prd_summary": "PRD-Vega-v1: migrate billing to the new proration engine. GA date is unconfirmed and gated on closing the proration defect.",
+    "prd_summary": "PRD-Vega-v1: migrate billing to the new proration engine. GA date is unconfirmed and gated on closing the proration defect and QA sign-off.",
     "activity": [
-      { "type": "issue_open", "id": "#440", "title": "Double-charge on plan upgrade", "severity": "sev-1" },
-      { "type": "pr_open", "id": "#442", "title": "Fix proration rounding", "date": "2026-06-28" }
+      { "type": "pr_merged", "id": "#442", "title": "Fix proration rounding", "date": "2026-07-01" },
+      { "type": "issue_open", "id": "#440", "title": "Double-charge edge case still open in QA", "severity": "sev-1" },
+      { "type": "pr_open", "id": "#448", "title": "Proration regression test suite", "date": "2026-07-04" }
     ]
   },
   "P-ORBIT": {
@@ -38,6 +39,17 @@
     "sprint": "n/a",
     "prd": "PRD-Orbit-v0",
     "prd_summary": "PRD-Orbit-v0: CONFIDENTIAL. Unreleased AI features. Not to be referenced outside the core team until launch.",
+    "activity": []
+  },
+  "P-PULSAR": {
+    "project_id": "P-PULSAR",
+    "name": "Pulsar (next-gen search, unreleased)",
+    "status": "embargoed",
+    "flags": ["confidential"],
+    "pm": "you",
+    "sprint": "n/a",
+    "prd": "PRD-Pulsar-v0",
+    "prd_summary": "PRD-Pulsar-v0: CONFIDENTIAL / EMBARGOED. Early exploration of a next-gen search experience. Do not reference outside the core team until launch.",
     "activity": []
   }
 }

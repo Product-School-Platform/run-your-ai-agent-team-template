@@ -9,40 +9,57 @@
 
 ## 1. Trigger & loop type
 
-**Chosen type:** _heartbeat · cron · hook · goal_
+**Chosen type:** cron
 
-_Why this type? (e.g. a Monday-morning cron that assembles the weekly update, plus a hook on a new PRD to propose stories.)_
+**Schedule:** Every Tuesday at 9:30 AM in `America/New_York` (Eastern local time, adjusting automatically for daylight saving time).
+
+**Why:** Cortex runs one hour before my Tuesday 10:30 AM VP meeting so I have time to review. Cron fits the fixed schedule; heartbeat, hook, and goal loops aren't needed.
+
+**Duplicate prevention:** Track each project and reporting week to prevent duplicate runs.
 
 ## 2. Goal / definition of done
 
-_What outcome is this loop responsible for? For a goal loop, what validation says "done"? (e.g. a status update grounded in real activity, queued for review, nothing posted.)_
+The weekly update for my VP and properly prioritized proposed stories pass the critic and are queued for my approval. Both elements need my approval. Cortex publishes nothing and creates no tickets automatically.
 
 ## 3. Stop conditions
 
 | Condition | What it looks like | What happens |
 |---|---|---|
-| **Success** | _…_ | _…_ |
-| **Stuck / give up** | _…_ | _escalate / log / halt_ |
-| **Escalate to human** | _…_ | _HITL checkpoint (from agent-line-map)_ |
+| **Success** | The weekly VP update and prioritized proposed stories both pass the critic and are queued for my approval. | Stop at the human review checkpoint; nothing is published and no tickets are created. |
+| **Stuck / give up** | Required data or information is still missing after 3 retrieval attempts; Cortex cannot connect to a required tool; or the run reaches 10 minutes without completing. | Stop, log the reason, and hand off to me. |
+| **Escalate to human** | Data conflicts; confidential information is encountered; a request involves publishing or making commitments; the critic still rejects the output after 2 revisions; a spending or story limit is reached; or a human checkpoint in the agent-line map is reached. | Stop, record the reason, and hold the affected action for my approval. |
+
+**Human checkpoints:** Follow [the agent-line map](../01-agent-line/agent-line-map.md): I approve relevant context, spot-check draft claims against data, decide tone and commitment level, validate risk flags, choose what to escalate, approve proposed stories, and own publishing or company-wide approval. Cortex waits for the required human decision before proceeding with the affected action.
 
 ## 4. State
 
-_What persists across iterations, and what's the scope? (e.g. per-project context and last week's update; no cross-project confidential leakage.)_
+Keep the last 12 months of history for each project: weekly updates, decisions, escalations, proposed user stories, approvals, and communications. This makes it easy for me to look up past outputs and decisions. Keep each project's information separate.
+
+Track run status and reporting week for each project to prevent duplicate runs.
 
 ## 5. The five things a loop can lean on
 
-_`state` is always-on. `connectors` only if you already have one wired (e.g. a Jira key or Google MCP), otherwise just note it as a plan. `skills`, `subagents`, `work tree` scale with autonomy; "not needed yet, because…" is a valid answer._
+State tracking is required. External connectors are planned; the current build uses its existing tools and critic.
 
 | Component | For Cortex |
 |---|---|
-| **Work tree** (isolated workspace per run, a git worktree) | _…_ |
-| **Skills** (reusable capabilities) | _…_ |
-| **Plugins / connectors** (tools & access, optional if you don't have one yet) | _…_ |
-| **Subagents** (independent check when the loop can't grade itself) | _placeholder → M3 orchestration-map.md_ |
-| **State tracking** | _…_ |
+| **Work tree** (isolated workspace per run, a git worktree) | No separate workspace needed yet; Cortex only reads data and produces drafts. |
+| **Skills** (reusable capabilities) | No additional reusable skills needed yet; the current prompts and tools cover this workflow. |
+| **Plugins / connectors** (tools & access, optional if you don't have one yet) | Planned: Slack, Teams, email, and a ticket platform. These are not connected to Cortex yet. |
+| **Subagents** (independent check when the loop can't grade itself) | Keep the existing critic to check drafts; no extra specialists needed yet. |
+| **State tracking** | Keep 12 months of project-specific outputs, decisions, escalations, stories, approvals, and communications. Track run status and reporting week to prevent duplicates. |
 
 > Context plan (M4) and the hand-off to bounds & evals (M5) come in later modules, you'll add them to their own deliverables then, not here.
 
 ## Link to live loop
 
-_[path to your agent in `00-build/`]_
+[Cortex agent](../00-build/agent.py). Run `python agent.py happy --approve-context P-NORTH --approve-tone` only after approving Northstar-only context and a concise factual tone with no commitments. Without approval flags, the run stops at context/tone approval. Run `python agent.py missing-data` to demonstrate three failed retrieval attempts and a human handoff.
+
+The current build enforces the stop conditions and saves local results. The Tuesday schedule, 12-month history, and cross-run duplicate prevention remain planned; external connectors are not connected. Spending is estimated after requests, so a request can exceed the configured threshold.
+
+### Step 4 verification
+
+- Eleven offline tests passed for output requirements, approval gates, retrieval and connection failures, time/spending/story limits, revision limits, escalation outcomes, and project-scoped retrieval.
+- Happy path: a `gpt-4o` verification run produced the VP update and three ranked stories, passed the critic, and stopped at human approval. The run used temporary `CORTEX_MODEL=gpt-4o`, `CORTEX_PRICE_IN_PER_M=10`, and `CORTEX_PRICE_OUT_PER_M=30` overrides (conservative cost estimates, not quoted pricing). The recorded estimate was $0.0450. The saved default model was not changed; its verification attempts escalated on incorrect critic judgments about PRD scope.
+- Missing data: `P-HALO` retrieval failed exactly three times, then stopped and handed off without calling the model or inventing a launch date.
+- Local full traces: `00-build/run-output/trace-happy.txt` and `00-build/run-output/trace-missing-data.txt` (gitignored). These runs used fixture data, not live connectors.

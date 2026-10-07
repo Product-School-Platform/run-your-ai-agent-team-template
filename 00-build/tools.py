@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -71,27 +72,28 @@ def search_past_updates(query: str = "") -> dict:
     """Search previous status updates and decisions for tone and precedent (the
     memory/retrieval surface).
 
-    Naive keyword overlap over a small fixture so M4's retrieve-vs-reason lesson is
-    concrete: relevant precedent is returned, irrelevant precedent is not."""
+    Exact project-name matching keeps other projects out of approved context."""
     query = (query or "").lower()
     corpus = _load_json("past-updates.json") + _load_json("decision-log.json")
-    terms = {t for t in query.replace("#", " ").split() if len(t) > 2}
     hits = []
     for u in corpus:
-        haystack = f"{u.get('project','')} {u.get('summary','')} {u.get('theme','')}".lower()
-        if terms and any(term in haystack for term in terms):
+        if u.get('project', '').lower() == query:
             hits.append(u)
-    return {"query": query, "matches": hits or corpus[:2],
+    return {"query": query, "matches": hits,
             "note": "prior updates + decisions for precedent, team norms still govern."}
 
 
 def get_roadmap(query: str = "") -> dict:
-    """Return the roadmap. Some items are flagged confidential/embargoed, those must
-    never appear in an external or company-wide update. `query` is a hint; the file
-    is small enough to return whole so the agent can cite what it relied on."""
+    """Return only the requested project's section; withhold confidential details."""
     text = (FIXTURES / "roadmap.md").read_text()
-    return {"query": query, "roadmap": text,
-            "warning": "items marked CONFIDENTIAL must not be shared outside the core team."}
+    sections = re.split(r'(?m)^## ', text)[1:]
+    matches = [section for section in sections
+               if section.split(' (', 1)[0].strip().lower() == query.strip().lower()]
+    if not matches:
+        return {"error": "project_roadmap_not_found"}
+    if any('CONFIDENTIAL' in section.upper() for section in matches):
+        return {"roadmap": "CONFIDENTIAL: human review required"}
+    return {"query": query, "roadmap": '\n'.join('## ' + section for section in matches)}
 
 
 def get_norms(query: str = "") -> dict:
