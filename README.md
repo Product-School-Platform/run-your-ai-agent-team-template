@@ -1,6 +1,6 @@
 # Cortex: PM Chief-of-Staff Agent
 
-> My final project for Product School's **Agentic Loops for PMs** certification. A chief-of-staff agent that turns raw inputs (project state, GitHub/Jira activity, roadmap, past updates) into finished PM work, a leadership status update and a proposed backlog for a human to clear, built loop-first, bounded, grown into a fleet, and shipped up the Trust Ladder.
+> My final project for Product School's **Agentic Workflows & Loops** certification. A chief-of-staff agent that turns raw inputs (project state, GitHub/Jira activity, roadmap, past updates) into finished PM work, a leadership status update and a proposed backlog for a human to clear, built loop-first, bounded, grown into a fleet, and shipped up the Trust Ladder.
 
 This is a **template repo**. Click **Use this template → Create a new repository**, name it `pm-os-agent` (or your own agent's name), and fill in one folder per module as you go.
 
@@ -78,8 +78,8 @@ _shadow · assisted · supervised · bounded-autonomous · autonomous, which run
 
 ## How to submit
 
-- Turn the five deliverable files into your final deck (use the **Final Project Deliverables Builder** that ships with the course, it generates `pitch.html` + a clean `README.md` for you, or a tool like Gamma).
-- Submit your own copy to the learning platform within 7 days of your cohort ending.
+- Turn the five deliverable files into your final presentation with the **Final Project Deliverables Builder** that ships with the course. It generates `pitch.html` + a clean `README.md` for you.
+- Submit both on the learning platform within 7 days of your cohort ending: your presentation and your repo link.
 
 ## Repo structure
 

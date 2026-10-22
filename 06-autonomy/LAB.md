@@ -5,7 +5,7 @@ Codex) OR a chatbot (ChatGPT, Claude, Gemini) can walk the learner through the C
 human, you can also just read it top to bottom.
 -->
 
-# M6 Lab, The Autonomy Dial + Final Project (coding-agent runbook)  ·  CAPSTONE
+# M6 Lab, Widen Autonomy Only as Trust Is Earned + Final Project (coding-agent runbook)  ·  CAPSTONE
 
 **Deliverables:** `06-autonomy/production-and-autonomy.md` (★) · `06-autonomy/prototype.md` (★) · `06-autonomy/build-insights.md` (★) · a generated **HTML pitch deck**
 **Builds on:** every prior artifact (M1 agent line → M5 bounds & evals), have them all open
@@ -146,7 +146,7 @@ now (`python agent.py`) and save it.
    insights. Stuck? Click **"Load Cortex example"** for a worked fallback, then overwrite with your own
    numbers.
 2. Watch `pitch.html` render live; use the **Repo tree** tab to catch anything still missing.
-3. Download `pitch.html` + the generated `README.md`. Drop `README.md` at the root of the fork.
+3. Download `pitch.html` + the generated `README.md`. Drop `README.md` at the root of your repo.
 4. **Stranger-test (optional):** paste your README + the builder's AI-review prompt into ChatGPT /
    Claude / Gemini for a skeptical-exec read; fix anything generic.
 5. ▶️ **Commit + push** everything.
@@ -180,4 +180,4 @@ segment whose autonomy level was hardest to set.
 
 **Submit** your own copy of the deck + your repo to the learning platform within 7 days of your cohort ending.
 
-*Product School · Agentic Loops for PMs · M6 Capstone Lab (coding-agent runbook)*
+*Product School · Agentic Workflows & Loops · M6 Capstone Lab (coding-agent runbook)*

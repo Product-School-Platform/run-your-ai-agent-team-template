@@ -58,7 +58,7 @@ data source moves. Say this if the learner asks "is this real data?".
 
 Confirm these are true (ask the learner, don't assume):
 
-- [ ] Their forked template repo is open in this coding agent.
+- [ ] Their copy of the template repo is open in this coding agent.
 - [ ] `02-loop-design/loop-spec.md` is filled in from M2.
 - [ ] Cortex ran at least once in M2 (`python agent.py` in `00-build/`).
 
@@ -170,7 +170,7 @@ is an accepted substitute for an image. Add it to `06-autonomy/prototype.md` wit
 2. **Final pass.** Confirm all seven fields are filled:
    1. Why split / why not · 2. Topology (+ diagram) · 3. Roster · 4. Hand-offs ·
    5. The validator (checks + fail-action + cap) · 6. Shared vs isolated state · 7. Cost & latency budget.
-3. ▶️ **Commit** `03-orchestration/orchestration-map.md` to the fork (one folder per module).
+3. ▶️ **Commit** `03-orchestration/orchestration-map.md` to your repo (one folder per module).
 
 ✅ **DONE when:** the map has all seven fields, the required critic-rejection evidence is in
 `prototype.md`, and both are committed.

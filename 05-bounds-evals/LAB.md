@@ -61,7 +61,7 @@ The data is fake on purpose: Cortex runs on `00-build/fixtures/`. Say this if th
 
 Confirm these are true (ask, don't assume):
 
-- [ ] Their forked template repo is open in this assistant.
+- [ ] Their copy of the template repo is open in this assistant.
 - [ ] `01-agent-line/agent-line-map.md`, `02-loop-design/loop-spec.md`, `03-orchestration/orchestration-map.md`, and `04-memory-context/memory-and-context.md` exist.
 - [ ] They did **Part A** (tripped a bound + drafted a safety spec by instinct). If not, have them skim it now, Part B upgrades that draft.
 - [ ] The build ran at least once (`python agent.py` in `00-build/`).
@@ -189,4 +189,4 @@ tool call that worries you most, and the one bound that contains it.
 
 **Next:** Module 6, The Autonomy Dial: deploy Cortex and assemble your final project.
 
-*Product School · Agentic Loops for PMs · M5 Lab (coding-agent runbook)*
+*Product School · Agentic Workflows & Loops · M5 Lab (coding-agent runbook)*

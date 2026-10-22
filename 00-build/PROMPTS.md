@@ -7,7 +7,7 @@
 > prompts, if you'd rather drive each step by hand.
 
 You build Cortex by **directing your coding agent** (Claude Code, Cursor, or Codex).
-You do not write Python. Open your forked repo in your coding agent and paste the
+You do not write Python. Open your repo in your coding agent and paste the
 prompt for the step you're on. Read what it changed, ask follow-ups in plain English,
 and have it run the agent so you can screenshot the result.
 

@@ -60,7 +60,7 @@ one round of push-back.
 
 Confirm (ask, don't assume):
 
-- [ ] Their forked repo is open in this assistant; the build ran once in M1 (`python agent.py`).
+- [ ] Their repo is open in this assistant; the build ran once in M1 (`python agent.py`).
 - [ ] `01-agent-line/agent-line-map.md` is filled.
 - [ ] They have their **parked Part A draft** (loop type guess + rough stop conditions). If skipped,
       have them skim Part A first.
@@ -154,4 +154,4 @@ commitments safe, and how would that change if the agent line moved and Cortex *
 
 **Next:** Module 3, Orchestration & Subagents: teams that don't collapse.
 
-*Product School · Agentic Loops for PMs · M2 Lab / Part B (coding-agent runbook)*
+*Product School · Agentic Workflows & Loops · M2 Lab / Part B (coding-agent runbook)*

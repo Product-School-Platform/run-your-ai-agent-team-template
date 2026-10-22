@@ -5,7 +5,7 @@ Codex) OR a chatbot (ChatGPT, Claude, Gemini) can walk the learner through it. I
 you can also just read it top to bottom.
 -->
 
-# M1 Lab, The Agent Line (coding-agent runbook)
+# M1 Lab, Decide What the Agent Is Allowed to Do (coding-agent runbook)
 
 **Deliverable:** `01-agent-line/agent-line-map.md`
 **Builds on:** nothing yet, this is the first lab; it seeds every later module
@@ -164,4 +164,4 @@ permission" is the sentence that keeps you employed.
 
 **Next:** Module 2, Loop Engineering: turn the hand-off into an agent that fires itself.
 
-*Product School · Agentic Loops for PMs · M1 Lab (coding-agent runbook)*
+*Product School · Agentic Workflows & Loops · M1 Lab (coding-agent runbook)*

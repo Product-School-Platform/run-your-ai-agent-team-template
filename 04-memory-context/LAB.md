@@ -64,7 +64,7 @@ The build runs on `00-build/fixtures/`; the sources are the real tools in `00-bu
 
 Confirm (ask, don't assume):
 
-- [ ] Their forked repo is open; M1/M2/M3 artifacts exist; the build ran in M2.
+- [ ] Their repo is open; M1/M2/M3 artifacts exist; the build ran in M2.
 - [ ] They have their **parked Part A draft** (per-source gut calls + remember/forget + "how it rots").
       If skipped, have them skim Part A first.
 
@@ -194,4 +194,4 @@ rubric factor (size, volatility, citation, cost, or latency) that settled it.
 
 **Next:** Module 5, Bounds, Trust & Evals: make it fail safe and prove it.
 
-*Product School · Agentic Loops for PMs · M4 Lab / Part B (coding-agent runbook)*
+*Product School · Agentic Workflows & Loops · M4 Lab / Part B (coding-agent runbook)*
